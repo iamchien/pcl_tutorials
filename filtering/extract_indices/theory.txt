@@ -1,0 +1,4 @@
+- Giảm chiều dữ liệu bằng cách lấy trung bình không gian của các điểm trong point cloud bị giới hạn bởi mỗi voxel.
+- Tập các điểm nằm trong giới hạn của một voxel được gán cho voxel đó và được kết hợp thống kê thành một điểm đầu ra.
+
+
