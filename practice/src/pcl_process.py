@@ -2,17 +2,17 @@ import numpy as np
 import open3d as o3d
 import matplotlib.pyplot as plt
 
-# pcd = o3d.io.read_point_cloud("../../data/kinect_robot/TLS_kitchen.pcd")
-pcd = o3d.io.read_point_cloud("../data/output/py/outlier/rest_8.pcd")
-# o3d.io.write_point_cloud("../../data/kinect_robot/TLS_kitchen_2.pcd", pcd)
+pcd = o3d.io.read_point_cloud("../../data/kinect_robot/TLS_kitchen.ply")
+# pcd = o3d.io.read_point_cloud("../data/output/py/outlier/rest_8.pcd")
 
 """# Step 3: First segmentation round
 
 ## 3.1 [Optional] Normals computation
 """
 
-# pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=16), fast_normal_computation=True)
+pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.1, max_nn=16), fast_normal_computation=True)
 pcd.paint_uniform_color([0.6, 0.6, 0.6])
+o3d.io.write_point_cloud("../../data/kinect_robot/TLS_kitchen_2.pcd", pcd)
 # o3d.visualization.draw_geometries([pcd]) #Works only outside Jupyter/Colab
 
 """## 3.2 [INITIATION] 3D Shape Detection with RANSAC"""
@@ -30,8 +30,8 @@ outlier_cloud = pcd.select_by_index(inliers, invert=True)
 inlier_cloud.paint_uniform_color(colors_idx[9][:3])
 # outlier_cloud.paint_uniform_color(colors_idx[0])
 
-o3d.io.write_point_cloud("../data/output/inlier/py/in_9.pcd", inlier_cloud)
-o3d.io.write_point_cloud("../data/output/outlier/py/rest_9.pcd", outlier_cloud)
+# o3d.io.write_point_cloud("../data/output/inlier/py/in_9.pcd", inlier_cloud)
+# o3d.io.write_point_cloud("../data/output/outlier/py/rest_9.pcd", outlier_cloud)
 
 # o3d.visualization.draw_geometries([inlier_cloud, outlier_cloud])
 
