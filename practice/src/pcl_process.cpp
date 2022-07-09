@@ -30,8 +30,8 @@ void extract_indices(point_cloud_rgb_t::Ptr &cloud_rgb,
                 pcl::PointIndices::Ptr &inliers);
 
 void segmen_plane(point_cloud_rgb_t::Ptr &cloud_rgb,
-                point_cloud_rgb_t::Ptr &segment,
-                int max_plane_idx);
+                point_cloud_rgb_t::Ptr &segment, int start_idx,
+                int max_plane_idx, bool do_cluster);
 
 void clustering(point_cloud_rgb_t::Ptr &cloud_rgb,
     std::vector<pcl::PointIndices> &cluster_indices);
@@ -44,7 +44,8 @@ int main (int argc, char** argv)
     pcl::io::loadPCDFile<pcl::PointXYZRGB> ("../../data/kinect_robot/world_filtered.pcd", *cloud_rgb);
     // XYZtoXYZRGB(*cloud, *cloud_rgb);
 
-    segmen_plane(cloud_rgb, segment, 1);
+    segmen_plane(cloud_rgb, segment, 0, 1, false);
+    segmen_plane(cloud_rgb, segment, 1, 8, true);
 
     pcl::io::savePCDFile<pcl::PointXYZRGB>("../data/output/world_filtered_segmen_cpp.pcd", *segment);
 
@@ -52,8 +53,8 @@ int main (int argc, char** argv)
 }
 
 void segmen_plane(point_cloud_rgb_t::Ptr &cloud_rgb,
-                point_cloud_rgb_t::Ptr &segment,
-                int max_plane_idx)
+                point_cloud_rgb_t::Ptr &segment, int start_idx,
+                int max_plane_idx, bool do_cluster)
 {
     point_cloud_rgb_t::Ptr inlierPoints (new point_cloud_rgb_t ()),
                         inlierPoints_neg (new point_cloud_rgb_t ());
@@ -63,7 +64,7 @@ void segmen_plane(point_cloud_rgb_t::Ptr &cloud_rgb,
     point_cloud_rgb_t *segments;
     segments = new point_cloud_rgb_t[max_plane_idx];
 
-    for (int i = 0; i < max_plane_idx; i++)
+    for (int i = start_idx; i < max_plane_idx; i++)
     {
         uint8_t r = color_picker[i][0];
         uint8_t g = color_picker[i][1];
@@ -84,23 +85,26 @@ void segmen_plane(point_cloud_rgb_t::Ptr &cloud_rgb,
         // std::cout << inliers->indices.size() << std::endl;
         // std::cout << inlierPoints->points.size() << std::endl;
         
-        std::vector<pcl::PointIndices> cluster_indices;
-        clustering(inlierPoints, cluster_indices);
-        std::cout << "PointCloud representing the Cluster: " << cluster_indices.size() << " data points." << std::endl;
-        size_t re[2] = {cluster_indices[0].indices.size(), 0};
-        for (size_t i = 1; i < cluster_indices.size(); i++)
+        if (do_cluster)
         {
-            size_t tmp = cluster_indices[i].indices.size();
-            // std::cout << tmp << std::endl;
-            if (re[0] <= tmp)
+            std::vector<pcl::PointIndices> cluster_indices;
+            clustering(inlierPoints, cluster_indices);
+            std::cout << "PointCloud representing the Cluster: " << cluster_indices.size() << " data points." << std::endl;
+            size_t re[2] = {cluster_indices[0].indices.size(), 0};
+            for (size_t i = 1; i < cluster_indices.size(); i++)
             {
-                re[0] = tmp;
-                re[1] = i;
+                size_t tmp = cluster_indices[i].indices.size();
+                // std::cout << tmp << std::endl;
+                if (re[0] <= tmp)
+                {
+                    re[0] = tmp;
+                    re[1] = i;
+                }
             }
+            *inliers = cluster_indices[re[1]];
+            // std::cout << inliers->indices.size() << std::endl;
+            pcl::copyPointCloud<pcl::PointXYZRGB>(*cloud_rgb, *inliers, *inlierPoints);
         }
-        *inliers = cluster_indices[re[1]];
-        // std::cout << inliers->indices.size() << std::endl;
-        pcl::copyPointCloud<pcl::PointXYZRGB>(*cloud_rgb, *inliers, *inlierPoints);
 
         for (int m=0; m<inlierPoints->points.size(); m++)
         {   
