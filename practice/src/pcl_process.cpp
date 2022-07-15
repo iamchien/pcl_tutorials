@@ -9,6 +9,8 @@
 #include <pcl/filters/extract_indices.h>
 #include <pcl/search/kdtree.h>
 #include <pcl/segmentation/extract_clusters.h>
+#include <pcl/filters/project_inliers.h>
+#include <pcl/surface/concave_hull.h>
 
 typedef pcl::PointCloud<pcl::PointXYZRGB> point_cloud_rgb_t;
 
@@ -31,10 +33,16 @@ void extract_indices(point_cloud_rgb_t::Ptr &cloud_rgb,
 
 void segmen_plane(point_cloud_rgb_t::Ptr &cloud_rgb,
                 point_cloud_rgb_t::Ptr &segment, int start_idx,
-                int max_plane_idx, bool do_cluster);
+                int max_plane_idx, bool do_cluster, bool do_projected);
 
 void clustering(point_cloud_rgb_t::Ptr &cloud_rgb,
     std::vector<pcl::PointIndices> &cluster_indices);
+
+void concave_hull(point_cloud_rgb_t::Ptr &inlierPoints,
+                pcl::PointIndices::Ptr &inliers,
+                point_cloud_rgb_t::Ptr &cloud_hull,
+                pcl::ModelCoefficients::Ptr &coefficients,
+                bool do_projected);
 
 int main (int argc, char** argv)
 {
@@ -44,20 +52,21 @@ int main (int argc, char** argv)
     pcl::io::loadPCDFile<pcl::PointXYZRGB> ("../../data/kinect_robot/world_filtered.pcd", *cloud_rgb);
     // XYZtoXYZRGB(*cloud, *cloud_rgb);
 
-    segmen_plane(cloud_rgb, segment, 0, 1, false);
-    segmen_plane(cloud_rgb, segment, 1, 8, true);
+    segmen_plane(cloud_rgb, segment, 0, 1, false, false);
+    segmen_plane(cloud_rgb, segment, 1, 8, true, true);
 
-    pcl::io::savePCDFile<pcl::PointXYZRGB>("../data/output/world_filtered_segmen_cpp.pcd", *segment);
+    // pcl::io::savePCDFile<pcl::PointXYZRGB>("../data/output/world_filtered_segmen_cpp.pcd", *segment);
 
     return (0);
 }
 
 void segmen_plane(point_cloud_rgb_t::Ptr &cloud_rgb,
                 point_cloud_rgb_t::Ptr &segment, int start_idx,
-                int max_plane_idx, bool do_cluster)
+                int max_plane_idx, bool do_cluster, bool do_projected)
 {
     point_cloud_rgb_t::Ptr inlierPoints (new point_cloud_rgb_t ()),
-                        inlierPoints_neg (new point_cloud_rgb_t ());
+                        inlierPoints_neg (new point_cloud_rgb_t ()),
+                        cloud_hull (new point_cloud_rgb_t ());
 
     pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients ());
     pcl::PointIndices::Ptr inliers (new pcl::PointIndices ());
@@ -85,32 +94,46 @@ void segmen_plane(point_cloud_rgb_t::Ptr &cloud_rgb,
         // std::cout << inliers->indices.size() << std::endl;
         // std::cout << inlierPoints->points.size() << std::endl;
         
+        std::stringstream ss;
         if (do_cluster)
         {
             std::vector<pcl::PointIndices> cluster_indices;
             clustering(inlierPoints, cluster_indices);
             std::cout << "PointCloud representing the Cluster: " << cluster_indices.size() << " data points." << std::endl;
             size_t re[2] = {cluster_indices[0].indices.size(), 0};
-            for (size_t i = 1; i < cluster_indices.size(); i++)
+            for (size_t j = 1; j < cluster_indices.size(); j++)
             {
-                size_t tmp = cluster_indices[i].indices.size();
+                size_t tmp = cluster_indices[j].indices.size();
                 // std::cout << tmp << std::endl;
                 if (re[0] <= tmp)
                 {
                     re[0] = tmp;
-                    re[1] = i;
+                    re[1] = j;
                 }
             }
             *inliers = cluster_indices[re[1]];
             // std::cout << inliers->indices.size() << std::endl;
             pcl::copyPointCloud<pcl::PointXYZRGB>(*cloud_rgb, *inliers, *inlierPoints);
+
+            ss << "../data/output/inlier_" << i << ".pcd";
+            pcl::io::savePCDFile<pcl::PointXYZRGB>(ss.str(), *inlierPoints);
+            ss.rdbuf()->pubseekpos(0);
         }
+
+        concave_hull(inlierPoints, inliers, cloud_hull, coefficients, do_projected);
+        std::cerr << "Concave hull has: " << cloud_hull->size () << " data points." << std::endl;
+        
+        ss << "../data/output/cloud_projected_" << i << ".pcd";
+        std::cout << ss.str() << std::endl;
+
+        pcl::io::savePCDFile<pcl::PointXYZRGB>(ss.str(), *cloud_hull);
 
         for (int m=0; m<inlierPoints->points.size(); m++)
         {   
             uint32_t rgb = (r << 16) | (g << 8) | b;
             inlierPoints->points[m].rgba = *(uint32_t *)(&rgb); // makes the point red
         }
+
         pcl::copyPointCloud<pcl::PointXYZRGB>(*inlierPoints, segments[i]);
         *segment += segments[i];
         extract_indices(cloud_rgb, inlierPoints_neg, inliers);
@@ -145,4 +168,36 @@ void clustering(point_cloud_rgb_t::Ptr &inlierPoints,
     ec.extract (cluster_indices);
 
     // std::cout << cluster_indices.size() << std::endl;
+}
+
+void concave_hull(point_cloud_rgb_t::Ptr &inlierPoints,
+                pcl::PointIndices::Ptr &inliers,
+                point_cloud_rgb_t::Ptr &cloud_hull,
+                pcl::ModelCoefficients::Ptr &coefficients,
+                bool do_projected)
+{
+    if (do_projected)
+    {
+        point_cloud_rgb_t::Ptr cloud_projected (new point_cloud_rgb_t());
+        
+        // Project the model inliers
+        pcl::ProjectInliers<pcl::PointXYZRGB> proj;
+        proj.setModelType (pcl::SACMODEL_PLANE);
+        proj.setInputCloud (inlierPoints);
+        proj.setIndices (inliers);
+        proj.setModelCoefficients (coefficients);
+        proj.filter (*cloud_projected);
+        // proj.filter (*cloud_hull);
+
+        std::cerr << "Peojected has: " << cloud_projected->size () << " data points." << std::endl;
+        pcl::copyPointCloud<pcl::PointXYZRGB>(*cloud_projected, *inlierPoints);
+    }
+
+    pcl::ConcaveHull<pcl::PointXYZRGB> chull;
+    chull.setInputCloud (inlierPoints);
+    // chull.setInputCloud (inlierPoints);
+    chull.setAlpha (0.1);
+    chull.reconstruct (*cloud_hull);
+
+    // std::cerr << "Concave hull has: " << cloud_hull->size () << " data points." << std::endl;
 }
