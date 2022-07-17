@@ -35,11 +35,3 @@ add_executable (pcl_process
 target_link_libraries (pcl_process
   ${PCL_LIBRARIES}
 )
-
-add_executable (open3d_segmen
-  src/open3d_segmen.cpp
-)
-target_link_libraries (open3d_segmen
-  ${Open3D_LIBRARIES}
-)
-

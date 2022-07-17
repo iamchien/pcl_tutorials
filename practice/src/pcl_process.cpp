@@ -195,6 +195,7 @@ void concave_hull(point_cloud_rgb_t::Ptr &inlierPoints,
 
     pcl::ConcaveHull<pcl::PointXYZRGB> chull;
     chull.setInputCloud (inlierPoints);
+    chull.setKeepInformation(true);
     // chull.setInputCloud (inlierPoints);
     chull.setAlpha (0.1);
     chull.reconstruct (*cloud_hull);

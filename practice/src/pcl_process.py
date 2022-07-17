@@ -14,22 +14,22 @@ pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.
 pcd.paint_uniform_color([0.6, 0.6, 0.6])
 # o3d.visualization.draw_geometries([pcd]) #Works only outside Jupyter/Colab
 
-# """## 3.2 [INITIATION] 3D Shape Detection with RANSAC"""
-# colors_idx = []
-# for i in range(10):
-#     colors = plt.get_cmap("tab20")(i)
-#     colors_idx.append(colors)
-# # print(colors_idx)
+"""## 3.2 [INITIATION] 3D Shape Detection with RANSAC"""
+colors_idx = []
+for i in range(10):
+    colors = plt.get_cmap("tab20")(i)
+    colors_idx.append(colors)
+# print(colors_idx)
 
-# plane_model, inliers = pcd.segment_plane(distance_threshold=0.01,ransac_n=3,num_iterations=1000)
-# [a, b, c, d] = plane_model
-# print(f"Plane equation: {a:.2f}x + {b:.2f}y + {c:.2f}z + {d:.2f} = 0")
-# inlier_cloud = pcd.select_by_index(inliers)
-# outlier_cloud = pcd.select_by_index(inliers, invert=True)
-# inlier_cloud.paint_uniform_color(colors_idx[9][:3])
-# outlier_cloud.paint_uniform_color(colors_idx[0])
+plane_model, inliers = pcd.segment_plane(distance_threshold=0.01,ransac_n=3,num_iterations=1000)
+[a, b, c, d] = plane_model
+print(f"Plane equation: {a:.2f}x + {b:.2f}y + {c:.2f}z + {d:.2f} = 0")
+inlier_cloud = pcd.select_by_index(inliers)
+outlier_cloud = pcd.select_by_index(inliers, invert=True)
+inlier_cloud.paint_uniform_color(colors_idx[9][:3])
+outlier_cloud.paint_uniform_color(colors_idx[0][:3])
 
-# o3d.visualization.draw_geometries([inlier_cloud, outlier_cloud])
+o3d.visualization.draw_geometries([inlier_cloud, outlier_cloud])
 
 """## 3.3 [INITIATION] Clustering with DBSCAN"""
 
@@ -48,22 +48,23 @@ pcd.colors = o3d.utility.Vector3dVector(colors[:, :3])
 ## 4.1 RANSAC loop for multiple planar shapes detection
 """
 
-# segment_models={}
-# segments={}
-# max_plane_idx=10
-# rest=pcd
-# for i in range(max_plane_idx):
-#     colors = plt.get_cmap("tab20")(i)
-#     _, inliers = rest.segment_plane(distance_threshold=0.01,ransac_n=3,num_iterations=1000)
-#     segments[i]=rest.select_by_index(inliers)
-#     segments[i].paint_uniform_color(list(colors[:3]))
-#     rest = rest.select_by_index(inliers, invert=True)
+segment_models={}
+segments={}
+max_plane_idx=10
+rest=pcd
+for i in range(max_plane_idx):
+    colors = plt.get_cmap("tab20")(i)
+    _, inliers = rest.segment_plane(distance_threshold=0.01,ransac_n=3,num_iterations=1000)
+    segments[i]=rest.select_by_index(inliers)
+    segments[i].paint_uniform_color(list(colors[:3]))
+    rest = rest.select_by_index(inliers, invert=True)
 
-#     # name = "../data/output/rest_" + str(i)+ ".pcd"
-#     # o3d.io.write_point_cloud(name, pcd)
+    # name = "../data/output/rest_" + str(i)+ ".pcd"
+    # o3d.io.write_point_cloud(name, pcd)
 
-#     print("pass",i,"/",max_plane_idx,"done.")
-    # o3d.visualization.draw_geometries([segments[i] for i in range(len(segments))]+[rest])
+    print("pass",i,"/",max_plane_idx,"done.")
+
+o3d.visualization.draw_geometries([segments[i] for i in range(max_plane_idx)]+[rest])
 
 """## 4.2 Refined RANSAC with DBSCAN clustering"""
 

@@ -7,60 +7,54 @@
 #include <pcl/sample_consensus/model_types.h>
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/filters/extract_indices.h>
+#include <pcl/search/kdtree.h>
+#include <pcl/segmentation/extract_clusters.h>
 
-typedef pcl::PointCloud<pcl::PointXYZ> point_cloud_t;
 typedef pcl::PointCloud<pcl::PointXYZRGB> point_cloud_rgb_t;
 
-int color_picker[10][3] = {
-    {0  , 153, 204},
-    {0  , 255, 255},
-    {51 , 204, 51 },
-    {204, 204, 0  },
-    {255, 102, 0  },
-    {255, 102, 204},
-    {51 , 102, 255},
-    {153, 51 , 153},
-    {153, 51 , 51 },
-    {255, 204, 0  }
+int color_picker[20][3] = {
+    {0  , 153, 204},{255,   0, 255},
+    {0  , 255, 255},{153,   0, 255},
+    {51 , 204, 51 },{102, 102, 153},
+    {204, 204, 0  },{  0,   0, 204},
+    {255, 102, 0  },{  0,  51, 153},
+    {255, 102, 204},{  0,  51, 102},
+    {51 , 102, 255},{ 51, 153, 102},
+    {153, 51 , 153},{  0, 102,   0},
+    {153, 51 , 51 },{102, 153,   0},
+    {255, 204, 0  },{255, 255,   0}
 };
-
-// void XYZtoXYZRGB(boost::shared_ptr<point_cloud_t> &input,
-//                 boost::shared_ptr<point_cloud_rgb_t> &output)
-void XYZtoXYZRGB(point_cloud_t &input,
-                point_cloud_rgb_t &output)
-{
-    output.points.resize(input.points.size());
-    output.width = input.width;
-    output.height = input.height;
-    // std::cout<<cloud_rgb->header<<" "<<cloud_rgb->is_dense<<std::endl;
-    // std::cout<<cloud->header<<" "<<cloud->is_dense<<std::endl;
-
-    for (size_t i = 0; i < input.points.size(); i++) 
-    {
-        output.points[i].x = input.points[i].x;
-        output.points[i].y = input.points[i].y;
-        output.points[i].z = input.points[i].z;
-        
-        output.points[i].r = 255;
-        output.points[i].g = 0;
-        output.points[i].b = 0;
-    }
-}
 
 void extract_indices(point_cloud_rgb_t::Ptr &cloud_rgb,
                 point_cloud_rgb_t::Ptr &inlierPoints_neg,
-                pcl::PointIndices::Ptr &inliers)
+                pcl::PointIndices::Ptr &inliers);
+
+void segmen_plane(point_cloud_rgb_t::Ptr &cloud_rgb,
+                point_cloud_rgb_t::Ptr &segment, int start_idx,
+                int max_plane_idx, bool do_cluster);
+
+void clustering(point_cloud_rgb_t::Ptr &cloud_rgb,
+    std::vector<pcl::PointIndices> &cluster_indices);
+
+int main (int argc, char** argv)
 {
-    pcl::ExtractIndices<pcl::PointXYZRGB> extract;
-    extract.setInputCloud (cloud_rgb);
-    extract.setIndices (inliers);
-    extract.setNegative (true);//false
-    extract.filter (*inlierPoints_neg);
+    point_cloud_rgb_t::Ptr cloud_rgb (new point_cloud_rgb_t),
+                        segment (new point_cloud_rgb_t);
+
+    pcl::io::loadPCDFile<pcl::PointXYZRGB> ("../../data/kinect_robot/world_filtered.pcd", *cloud_rgb);
+    // XYZtoXYZRGB(*cloud, *cloud_rgb);
+
+    segmen_plane(cloud_rgb, segment, 0, 1, false);
+    segmen_plane(cloud_rgb, segment, 1, 8, true);
+
+    pcl::io::savePCDFile<pcl::PointXYZRGB>("../data/output/world_filtered_segmen_cpp.pcd", *segment);
+
+    return (0);
 }
 
 void segmen_plane(point_cloud_rgb_t::Ptr &cloud_rgb,
-                point_cloud_rgb_t::Ptr &segment,
-                int max_plane_idx)
+                point_cloud_rgb_t::Ptr &segment, int start_idx,
+                int max_plane_idx, bool do_cluster)
 {
     point_cloud_rgb_t::Ptr inlierPoints (new point_cloud_rgb_t ()),
                         inlierPoints_neg (new point_cloud_rgb_t ());
@@ -70,7 +64,7 @@ void segmen_plane(point_cloud_rgb_t::Ptr &cloud_rgb,
     point_cloud_rgb_t *segments;
     segments = new point_cloud_rgb_t[max_plane_idx];
 
-    for (int i = 0; i < max_plane_idx; i++)
+    for (int i = start_idx; i < max_plane_idx; i++)
     {
         uint8_t r = color_picker[i][0];
         uint8_t g = color_picker[i][1];
@@ -90,7 +84,28 @@ void segmen_plane(point_cloud_rgb_t::Ptr &cloud_rgb,
         pcl::copyPointCloud<pcl::PointXYZRGB>(*cloud_rgb, *inliers, *inlierPoints);
         // std::cout << inliers->indices.size() << std::endl;
         // std::cout << inlierPoints->points.size() << std::endl;
-        // for (int m=0; m<inliers->indices.size(); m++)
+        
+        if (do_cluster)
+        {
+            std::vector<pcl::PointIndices> cluster_indices;
+            clustering(inlierPoints, cluster_indices);
+            std::cout << "PointCloud representing the Cluster: " << cluster_indices.size() << " data points." << std::endl;
+            size_t re[2] = {cluster_indices[0].indices.size(), 0};
+            for (size_t i = 1; i < cluster_indices.size(); i++)
+            {
+                size_t tmp = cluster_indices[i].indices.size();
+                // std::cout << tmp << std::endl;
+                if (re[0] <= tmp)
+                {
+                    re[0] = tmp;
+                    re[1] = i;
+                }
+            }
+            *inliers = cluster_indices[re[1]];
+            // std::cout << inliers->indices.size() << std::endl;
+            pcl::copyPointCloud<pcl::PointXYZRGB>(*cloud_rgb, *inliers, *inlierPoints);
+        }
+
         for (int m=0; m<inlierPoints->points.size(); m++)
         {   
             uint32_t rgb = (r << 16) | (g << 8) | b;
@@ -103,20 +118,31 @@ void segmen_plane(point_cloud_rgb_t::Ptr &cloud_rgb,
     }
 }
 
-
-int main (int argc, char** argv)
+void extract_indices(point_cloud_rgb_t::Ptr &cloud_rgb,
+                point_cloud_rgb_t::Ptr &inlierPoints_neg,
+                pcl::PointIndices::Ptr &inliers)
 {
-    point_cloud_rgb_t::Ptr cloud_rgb (new point_cloud_rgb_t),
-                        segment (new point_cloud_rgb_t);
+    pcl::ExtractIndices<pcl::PointXYZRGB> extract;
+    extract.setInputCloud (cloud_rgb);
+    extract.setIndices (inliers);
+    extract.setNegative (true);//false
+    extract.filter (*inlierPoints_neg);
+}
 
-    pcl::io::loadPCDFile<pcl::PointXYZRGB> ("../../data/kinect_robot/world_filtered.pcd", *cloud_rgb);
-    // XYZtoXYZRGB(*cloud, *cloud_rgb);
+void clustering(point_cloud_rgb_t::Ptr &inlierPoints,
+    std::vector<pcl::PointIndices> &cluster_indices)
+{
+    // Creating the KdTree object for the search method of the extraction
+    pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB> ());
+    tree->setInputCloud (inlierPoints);
 
-    segmen_plane(cloud_rgb, segment, 1);
+    pcl::EuclideanClusterExtraction<pcl::PointXYZRGB> ec;
+    ec.setClusterTolerance (0.1); // 2cm
+    ec.setMinClusterSize (100);
+    ec.setMaxClusterSize (25000);
+    ec.setSearchMethod (tree);
+    ec.setInputCloud (inlierPoints);
+    ec.extract (cluster_indices);
 
-    segmen_plane(cloud_rgb, segment, 10);
-
-    pcl::io::savePCDFile<pcl::PointXYZRGB>("../data/output/world_filtered_segmen_cpp.pcd", *segment);
-
-    return (0);
+    // std::cout << cluster_indices.size() << std::endl;
 }

@@ -64,7 +64,6 @@ CMAKE_BINARY_DIR = /home/tvc/chien197/pcl_tutorials/practice/build
 
 # The main recursive "all" target.
 all: CMakeFiles/pcl_process.dir/all
-all: CMakeFiles/open3d_segmen.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -73,7 +72,6 @@ preinstall:
 
 # The main recursive "clean" target.
 clean: CMakeFiles/pcl_process.dir/clean
-clean: CMakeFiles/open3d_segmen.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -83,7 +81,7 @@ clean: CMakeFiles/open3d_segmen.dir/clean
 CMakeFiles/pcl_process.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pcl_process.dir/build.make CMakeFiles/pcl_process.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pcl_process.dir/build.make CMakeFiles/pcl_process.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tvc/chien197/pcl_tutorials/practice/build/CMakeFiles --progress-num=3,4 "Built target pcl_process"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tvc/chien197/pcl_tutorials/practice/build/CMakeFiles --progress-num=1,2 "Built target pcl_process"
 .PHONY : CMakeFiles/pcl_process.dir/all
 
 # Build rule for subdir invocation for target.
@@ -101,32 +99,6 @@ pcl_process: CMakeFiles/pcl_process.dir/rule
 CMakeFiles/pcl_process.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pcl_process.dir/build.make CMakeFiles/pcl_process.dir/clean
 .PHONY : CMakeFiles/pcl_process.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/open3d_segmen.dir
-
-# All Build rule for target.
-CMakeFiles/open3d_segmen.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/open3d_segmen.dir/build.make CMakeFiles/open3d_segmen.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/open3d_segmen.dir/build.make CMakeFiles/open3d_segmen.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tvc/chien197/pcl_tutorials/practice/build/CMakeFiles --progress-num=1,2 "Built target open3d_segmen"
-.PHONY : CMakeFiles/open3d_segmen.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/open3d_segmen.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tvc/chien197/pcl_tutorials/practice/build/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/open3d_segmen.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tvc/chien197/pcl_tutorials/practice/build/CMakeFiles 0
-.PHONY : CMakeFiles/open3d_segmen.dir/rule
-
-# Convenience name for target.
-open3d_segmen: CMakeFiles/open3d_segmen.dir/rule
-.PHONY : open3d_segmen
-
-# clean rule for target.
-CMakeFiles/open3d_segmen.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/open3d_segmen.dir/build.make CMakeFiles/open3d_segmen.dir/clean
-.PHONY : CMakeFiles/open3d_segmen.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

@@ -129,43 +129,6 @@ pcl_process/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pcl_process.dir/build.make CMakeFiles/pcl_process.dir/build
 .PHONY : pcl_process/fast
 
-#=============================================================================
-# Target rules for targets named open3d_segmen
-
-# Build rule for target.
-open3d_segmen: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 open3d_segmen
-.PHONY : open3d_segmen
-
-# fast build rule for target.
-open3d_segmen/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/open3d_segmen.dir/build.make CMakeFiles/open3d_segmen.dir/build
-.PHONY : open3d_segmen/fast
-
-src/open3d_segmen.o: src/open3d_segmen.cpp.o
-.PHONY : src/open3d_segmen.o
-
-# target to build an object file
-src/open3d_segmen.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/open3d_segmen.dir/build.make CMakeFiles/open3d_segmen.dir/src/open3d_segmen.cpp.o
-.PHONY : src/open3d_segmen.cpp.o
-
-src/open3d_segmen.i: src/open3d_segmen.cpp.i
-.PHONY : src/open3d_segmen.i
-
-# target to preprocess a source file
-src/open3d_segmen.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/open3d_segmen.dir/build.make CMakeFiles/open3d_segmen.dir/src/open3d_segmen.cpp.i
-.PHONY : src/open3d_segmen.cpp.i
-
-src/open3d_segmen.s: src/open3d_segmen.cpp.s
-.PHONY : src/open3d_segmen.s
-
-# target to generate assembly for a file
-src/open3d_segmen.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/open3d_segmen.dir/build.make CMakeFiles/open3d_segmen.dir/src/open3d_segmen.cpp.s
-.PHONY : src/open3d_segmen.cpp.s
-
 src/pcl_process.o: src/pcl_process.cpp.o
 .PHONY : src/pcl_process.o
 
@@ -198,11 +161,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... open3d_segmen"
 	@echo "... pcl_process"
-	@echo "... src/open3d_segmen.o"
-	@echo "... src/open3d_segmen.i"
-	@echo "... src/open3d_segmen.s"
 	@echo "... src/pcl_process.o"
 	@echo "... src/pcl_process.i"
 	@echo "... src/pcl_process.s"
