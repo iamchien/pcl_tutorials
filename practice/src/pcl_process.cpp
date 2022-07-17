@@ -55,7 +55,7 @@ int main (int argc, char** argv)
     segmen_plane(cloud_rgb, segment, 0, 1, false, false);
     segmen_plane(cloud_rgb, segment, 1, 8, true, true);
 
-    // pcl::io::savePCDFile<pcl::PointXYZRGB>("../data/output/world_filtered_segmen_cpp.pcd", *segment);
+    pcl::io::savePCDFile<pcl::PointXYZRGB>("../data/output/world_filtered_segmen_cpp.pcd", *segment);
 
     return (0);
 }
@@ -176,6 +176,9 @@ void concave_hull(point_cloud_rgb_t::Ptr &inlierPoints,
                 pcl::ModelCoefficients::Ptr &coefficients,
                 bool do_projected)
 {
+    point_cloud_rgb_t::Ptr inlierPoints_tmp (new point_cloud_rgb_t ());
+    pcl::copyPointCloud<pcl::PointXYZRGB>(*inlierPoints, *inlierPoints_tmp);
+
     if (do_projected)
     {
         point_cloud_rgb_t::Ptr cloud_projected (new point_cloud_rgb_t());
@@ -183,18 +186,18 @@ void concave_hull(point_cloud_rgb_t::Ptr &inlierPoints,
         // Project the model inliers
         pcl::ProjectInliers<pcl::PointXYZRGB> proj;
         proj.setModelType (pcl::SACMODEL_PLANE);
-        proj.setInputCloud (inlierPoints);
+        proj.setInputCloud (inlierPoints_tmp);
         proj.setIndices (inliers);
         proj.setModelCoefficients (coefficients);
         proj.filter (*cloud_projected);
         // proj.filter (*cloud_hull);
 
         std::cerr << "Peojected has: " << cloud_projected->size () << " data points." << std::endl;
-        pcl::copyPointCloud<pcl::PointXYZRGB>(*cloud_projected, *inlierPoints);
+        pcl::copyPointCloud<pcl::PointXYZRGB>(*cloud_projected, *inlierPoints_tmp);
     }
 
     pcl::ConcaveHull<pcl::PointXYZRGB> chull;
-    chull.setInputCloud (inlierPoints);
+    chull.setInputCloud (inlierPoints_tmp);
     chull.setKeepInformation(true);
     // chull.setInputCloud (inlierPoints);
     chull.setAlpha (0.1);
