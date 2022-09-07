@@ -2,7 +2,6 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/common/common.h>
 #include "utils.cpp"
-// #include "render.h"
 
 using namespace std;
 
@@ -13,11 +12,17 @@ int main (int argc, char** argv)
     point_cloud_rgb_t::Ptr cloud_rgb (new point_cloud_rgb_t),
                         segment (new point_cloud_rgb_t);
 
+    vector<pcl::ModelCoefficients> coeffs;
+
     pcl::io::loadPCDFile<pcl::PointXYZRGB> ("../../data/kinect_robot/world_filtered.pcd", *cloud_rgb);
     // XYZtoXYZRGB(*cloud, *cloud_rgb);
 
-    segmen_plane(cloud_rgb, segment, 0, 1, false, false);
-    segmen_plane(cloud_rgb, segment, 1, 8, true, true);
+    segmen_plane(cloud_rgb, segment, 0, false, false, coeffs);
+    for (int i = 1; i < 8; i++){
+        segmen_plane(cloud_rgb, segment, i, true, true, coeffs);
+    }
+
+    cout << coeffs.size() << endl;
 
     pcl::io::savePCDFile<pcl::PointXYZRGB>("../data/output/world_filtered_segmen_cpp.pcd", *segment);
 

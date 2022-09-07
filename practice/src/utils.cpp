@@ -82,7 +82,7 @@ void clustering(point_cloud_rgb_t::Ptr &inlierPoints,
 void concave_hull(point_cloud_rgb_t::Ptr &inlierPoints,
                 pcl::PointIndices::Ptr &inliers,
                 point_cloud_rgb_t::Ptr &cloud_hull,
-                pcl::ModelCoefficients::Ptr &coefficients,
+                pcl::ModelCoefficients::Ptr &coefficient,
                 bool do_projected)
 {
     point_cloud_rgb_t::Ptr inlierPoints_tmp (new point_cloud_rgb_t ());
@@ -97,7 +97,7 @@ void concave_hull(point_cloud_rgb_t::Ptr &inlierPoints,
         proj.setModelType (pcl::SACMODEL_PLANE);
         proj.setInputCloud (inlierPoints_tmp);
         proj.setIndices (inliers);
-        proj.setModelCoefficients (coefficients);
+        proj.setModelCoefficients (coefficient);
         proj.filter (*cloud_projected);
         // proj.filter (*cloud_hull);
 
@@ -116,84 +116,80 @@ void concave_hull(point_cloud_rgb_t::Ptr &inlierPoints,
 }
 
 void segmen_plane(point_cloud_rgb_t::Ptr &cloud_rgb,
-                point_cloud_rgb_t::Ptr &segment, int start_idx,
-                int max_plane_idx, bool do_cluster, bool do_projected)
+                point_cloud_rgb_t::Ptr &segment, int idx,
+                bool do_cluster, bool do_projected,
+                vector<pcl::ModelCoefficients> &coeffs)
 {
     point_cloud_rgb_t::Ptr inlierPoints (new point_cloud_rgb_t ()),
                         inlierPoints_neg (new point_cloud_rgb_t ()),
                         cloud_hull (new point_cloud_rgb_t ());
-
-    pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients ());
     pcl::PointIndices::Ptr inliers (new pcl::PointIndices ());
-    point_cloud_rgb_t *segments;
-    segments = new point_cloud_rgb_t[max_plane_idx];
+    pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients ());
 
-    for (int i = start_idx; i < max_plane_idx; i++)
+    uint8_t r = color_picker[idx][0];
+    uint8_t g = color_picker[idx][1];
+    uint8_t b = color_picker[idx][2];
+    
+    // Create the segmentation object.
+    pcl::SACSegmentation<pcl::PointXYZRGB> seg;
+    seg.setOptimizeCoefficients (true);       // Enable model coefficient refinement (optional).
+    seg.setInputCloud (cloud_rgb);
+    seg.setModelType (pcl::SACMODEL_PLANE);   // Configure the object to look for a plane.
+    seg.setMethodType (pcl::SAC_RANSAC);      // Use RANSAC method.
+    seg.setMaxIterations (1000);
+    seg.setDistanceThreshold (0.01);          // Set the maximum allowed distance to the model.
+    //seg.setRadiusLimits(0, 0.1);     // cylinder, Set minimum and maximum radius of the cylinder.
+    seg.segment (*inliers, *coefficients);
+
+    coeffs.push_back(*coefficients);
+
+    pcl::copyPointCloud<pcl::PointXYZRGB>(*cloud_rgb, *inliers, *inlierPoints);
+    // cout << inliers->indices.size() << endl;
+    // cout << inlierPoints->points.size() << endl;
+    
+    stringstream ss;
+    if (do_cluster)
     {
-        uint8_t r = color_picker[i][0];
-        uint8_t g = color_picker[i][1];
-        uint8_t b = color_picker[i][2];
-        
-        // Create the segmentation object.
-        pcl::SACSegmentation<pcl::PointXYZRGB> seg;
-        seg.setOptimizeCoefficients (true);       // Enable model coefficient refinement (optional).
-        seg.setInputCloud (cloud_rgb);
-        seg.setModelType (pcl::SACMODEL_PLANE);   // Configure the object to look for a plane.
-        seg.setMethodType (pcl::SAC_RANSAC);      // Use RANSAC method.
-        seg.setMaxIterations (1000);
-        seg.setDistanceThreshold (0.01);          // Set the maximum allowed distance to the model.
-        //seg.setRadiusLimits(0, 0.1);     // cylinder, Set minimum and maximum radius of the cylinder.
-        seg.segment (*inliers, *coefficients);
-
-        pcl::copyPointCloud<pcl::PointXYZRGB>(*cloud_rgb, *inliers, *inlierPoints);
-        // cout << inliers->indices.size() << endl;
-        // cout << inlierPoints->points.size() << endl;
-        
-        stringstream ss;
-        if (do_cluster)
+        vector<pcl::PointIndices> cluster_indices;
+        clustering(inlierPoints, cluster_indices);
+        cout << "PointCloud representing the Cluster: " << cluster_indices.size() << " data points." << endl;
+        size_t re[2] = {cluster_indices[0].indices.size(), 0};
+        for (size_t j = 1; j < cluster_indices.size(); j++)
         {
-            vector<pcl::PointIndices> cluster_indices;
-            clustering(inlierPoints, cluster_indices);
-            cout << "PointCloud representing the Cluster: " << cluster_indices.size() << " data points." << endl;
-            size_t re[2] = {cluster_indices[0].indices.size(), 0};
-            for (size_t j = 1; j < cluster_indices.size(); j++)
+            size_t tmp = cluster_indices[j].indices.size();
+            // cout << tmp << endl;
+            if (re[0] <= tmp)
             {
-                size_t tmp = cluster_indices[j].indices.size();
-                // cout << tmp << endl;
-                if (re[0] <= tmp)
-                {
-                    re[0] = tmp;
-                    re[1] = j;
-                }
+                re[0] = tmp;
+                re[1] = j;
             }
-            *inliers = cluster_indices[re[1]];
-            // cout << inliers->indices.size() << endl;
-            pcl::copyPointCloud<pcl::PointXYZRGB>(*cloud_rgb, *inliers, *inlierPoints);
-
-            ss << "../data/output/inlier_" << i << ".pcd";
-            pcl::io::savePCDFile<pcl::PointXYZRGB>(ss.str(), *inlierPoints);
-            ss.str("");
         }
+        *inliers = cluster_indices[re[1]];
+        // cout << inliers->indices.size() << endl;
+        pcl::copyPointCloud<pcl::PointXYZRGB>(*cloud_rgb, *inliers, *inlierPoints);
 
-        concave_hull(inlierPoints, inliers, cloud_hull, coefficients, do_projected);
-        cerr << "Concave hull has: " << cloud_hull->size () << " data points." << endl;
-        
-        ss << "../data/output/cloud_projected_" << i << ".pcd";
-        cout << ss.str() << endl;
-
-        pcl::io::savePCDFile<pcl::PointXYZRGB>(ss.str(), *cloud_hull);
-
-        for (int m=0; m<inlierPoints->points.size(); m++)
-        {   
-            uint32_t rgb = (r << 16) | (g << 8) | b;
-            inlierPoints->points[m].rgba = *(uint32_t *)(&rgb); // makes the point red
-        }
-
-        pcl::copyPointCloud<pcl::PointXYZRGB>(*inlierPoints, segments[i]);
-        *segment += segments[i];
-        extract_indices(cloud_rgb, inlierPoints_neg, inliers);
-        pcl::copyPointCloud<pcl::PointXYZRGB>(*inlierPoints_neg, *cloud_rgb);
+        // ss << "../data/output/inlier_" << i << ".pcd";
+        // pcl::io::savePCDFile<pcl::PointXYZRGB>(ss.str(), *inlierPoints);
+        // ss.str("");
     }
+
+    // concave_hull(inlierPoints, inliers, cloud_hull, coefficient, do_projected);
+    // cerr << "Concave hull has: " << cloud_hull->size () << " data points." << endl;
+    
+    // ss << "../data/output/cloud_projected_" << i << ".pcd";
+    // cout << ss.str() << endl;
+
+    // pcl::io::savePCDFile<pcl::PointXYZRGB>(ss.str(), *cloud_hull);
+
+    // for (int m=0; m<inlierPoints->points.size(); m++)
+    // {   
+    //     uint32_t rgb = (r << 16) | (g << 8) | b;
+    //     inlierPoints->points[m].rgba = *(uint32_t *)(&rgb); // makes the point red
+    // }
+
+    *segment += *inlierPoints;
+    extract_indices(cloud_rgb, inlierPoints_neg, inliers);
+    pcl::copyPointCloud<pcl::PointXYZRGB>(*inlierPoints_neg, *cloud_rgb);
 }
 
 
