@@ -1,1 +1,0 @@
-/usr/bin/c++       -rdynamic CMakeFiles/test_colormap.dir/src/test_colormap.cpp.o  -o test_colormap 

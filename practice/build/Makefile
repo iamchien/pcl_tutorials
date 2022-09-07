@@ -129,6 +129,32 @@ pcl_process/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pcl_process.dir/build.make CMakeFiles/pcl_process.dir/build
 .PHONY : pcl_process/fast
 
+#=============================================================================
+# Target rules for targets named random_forest
+
+# Build rule for target.
+random_forest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 random_forest
+.PHONY : random_forest
+
+# fast build rule for target.
+random_forest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/random_forest.dir/build.make CMakeFiles/random_forest.dir/build
+.PHONY : random_forest/fast
+
+#=============================================================================
+# Target rules for targets named rotating_calipers
+
+# Build rule for target.
+rotating_calipers: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rotating_calipers
+.PHONY : rotating_calipers
+
+# fast build rule for target.
+rotating_calipers/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rotating_calipers.dir/build.make CMakeFiles/rotating_calipers.dir/build
+.PHONY : rotating_calipers/fast
+
 src/pcl_process.o: src/pcl_process.cpp.o
 .PHONY : src/pcl_process.o
 
@@ -153,6 +179,54 @@ src/pcl_process.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/pcl_process.dir/build.make CMakeFiles/pcl_process.dir/src/pcl_process.cpp.s
 .PHONY : src/pcl_process.cpp.s
 
+src/random_forest.o: src/random_forest.cpp.o
+.PHONY : src/random_forest.o
+
+# target to build an object file
+src/random_forest.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/random_forest.dir/build.make CMakeFiles/random_forest.dir/src/random_forest.cpp.o
+.PHONY : src/random_forest.cpp.o
+
+src/random_forest.i: src/random_forest.cpp.i
+.PHONY : src/random_forest.i
+
+# target to preprocess a source file
+src/random_forest.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/random_forest.dir/build.make CMakeFiles/random_forest.dir/src/random_forest.cpp.i
+.PHONY : src/random_forest.cpp.i
+
+src/random_forest.s: src/random_forest.cpp.s
+.PHONY : src/random_forest.s
+
+# target to generate assembly for a file
+src/random_forest.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/random_forest.dir/build.make CMakeFiles/random_forest.dir/src/random_forest.cpp.s
+.PHONY : src/random_forest.cpp.s
+
+src/rotating_calipers.o: src/rotating_calipers.cpp.o
+.PHONY : src/rotating_calipers.o
+
+# target to build an object file
+src/rotating_calipers.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rotating_calipers.dir/build.make CMakeFiles/rotating_calipers.dir/src/rotating_calipers.cpp.o
+.PHONY : src/rotating_calipers.cpp.o
+
+src/rotating_calipers.i: src/rotating_calipers.cpp.i
+.PHONY : src/rotating_calipers.i
+
+# target to preprocess a source file
+src/rotating_calipers.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rotating_calipers.dir/build.make CMakeFiles/rotating_calipers.dir/src/rotating_calipers.cpp.i
+.PHONY : src/rotating_calipers.cpp.i
+
+src/rotating_calipers.s: src/rotating_calipers.cpp.s
+.PHONY : src/rotating_calipers.s
+
+# target to generate assembly for a file
+src/rotating_calipers.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rotating_calipers.dir/build.make CMakeFiles/rotating_calipers.dir/src/rotating_calipers.cpp.s
+.PHONY : src/rotating_calipers.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -162,9 +236,17 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... pcl_process"
+	@echo "... random_forest"
+	@echo "... rotating_calipers"
 	@echo "... src/pcl_process.o"
 	@echo "... src/pcl_process.i"
 	@echo "... src/pcl_process.s"
+	@echo "... src/random_forest.o"
+	@echo "... src/random_forest.i"
+	@echo "... src/random_forest.s"
+	@echo "... src/rotating_calipers.o"
+	@echo "... src/rotating_calipers.i"
+	@echo "... src/rotating_calipers.s"
 .PHONY : help
 
 

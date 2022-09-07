@@ -35,3 +35,14 @@ add_executable (pcl_process
 target_link_libraries (pcl_process
   ${PCL_LIBRARIES}
 )
+
+add_executable (random_forest
+  src/random_forest.cpp
+)
+target_link_libraries (random_forest
+  ${PCL_LIBRARIES}
+)
+
+add_executable (rotating_calipers
+  src/rotating_calipers.cpp
+)

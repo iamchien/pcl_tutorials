@@ -14,9 +14,6 @@
 # EXTERNAL cache entries
 ########################
 
-//The threading library used by boost-thread
-BOOST_THREAD_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libpthread.so
-
 //Boost atomic library (debug)
 Boost_ATOMIC_LIBRARY_DEBUG:FILEPATH=/usr/lib/x86_64-linux-gnu/libboost_atomic.so
 
@@ -86,15 +83,15 @@ CMAKE_ADDR2LINE:FILEPATH=/usr/bin/addr2line
 //Path to a program.
 CMAKE_AR:FILEPATH=/usr/bin/ar
 
-//Choose the type of build, options are: None(CMAKE_CXX_FLAGS or
-// CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel.
+//Choose the type of build, options are: None Debug Release RelWithDebInfo
+// MinSizeRel ...
 CMAKE_BUILD_TYPE:STRING=
 
 //Enable/Disable color output during build.
 CMAKE_COLOR_MAKEFILE:BOOL=ON
 
 //CXX compiler
-CMAKE_CXX_COMPILER:STRING=/usr/bin/c++
+CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/c++
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler
@@ -104,24 +101,23 @@ CMAKE_CXX_COMPILER_AR:FILEPATH=/usr/bin/gcc-ar-7
 // for the GCC compiler
 CMAKE_CXX_COMPILER_RANLIB:FILEPATH=/usr/bin/gcc-ranlib-7
 
-//Flags used by the compiler during all build types.
+//Flags used by the CXX compiler during all build types.
 CMAKE_CXX_FLAGS:STRING=
 
-//Flags used by the compiler during debug builds.
+//Flags used by the CXX compiler during DEBUG builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=-g
 
-//Flags used by the compiler during release builds for minimum
-// size.
+//Flags used by the CXX compiler during MINSIZEREL builds.
 CMAKE_CXX_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG
 
-//Flags used by the compiler during release builds.
+//Flags used by the CXX compiler during RELEASE builds.
 CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
 
-//Flags used by the compiler during release builds with debug info.
+//Flags used by the CXX compiler during RELWITHDEBINFO builds.
 CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 
 //C compiler
-CMAKE_C_COMPILER:STRING=/usr/bin/cc
+CMAKE_C_COMPILER:FILEPATH=/usr/bin/cc
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler
@@ -131,42 +127,41 @@ CMAKE_C_COMPILER_AR:FILEPATH=/usr/bin/gcc-ar-7
 // for the GCC compiler
 CMAKE_C_COMPILER_RANLIB:FILEPATH=/usr/bin/gcc-ranlib-7
 
-//Flags used by the compiler during all build types.
+//Flags used by the C compiler during all build types.
 CMAKE_C_FLAGS:STRING=
 
-//Flags used by the compiler during debug builds.
+//Flags used by the C compiler during DEBUG builds.
 CMAKE_C_FLAGS_DEBUG:STRING=-g
 
-//Flags used by the compiler during release builds for minimum
-// size.
+//Flags used by the C compiler during MINSIZEREL builds.
 CMAKE_C_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG
 
-//Flags used by the compiler during release builds.
+//Flags used by the C compiler during RELEASE builds.
 CMAKE_C_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
 
-//Flags used by the compiler during release builds with debug info.
+//Flags used by the C compiler during RELWITHDEBINFO builds.
 CMAKE_C_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 
 //Path to a program.
 CMAKE_DLLTOOL:FILEPATH=CMAKE_DLLTOOL-NOTFOUND
 
-//Flags used by the linker.
+//Flags used by the linker during all build types.
 CMAKE_EXE_LINKER_FLAGS:STRING=
 
-//Flags used by the linker during debug builds.
+//Flags used by the linker during DEBUG builds.
 CMAKE_EXE_LINKER_FLAGS_DEBUG:STRING=
 
-//Flags used by the linker during release minsize builds.
+//Flags used by the linker during MINSIZEREL builds.
 CMAKE_EXE_LINKER_FLAGS_MINSIZEREL:STRING=
 
-//Flags used by the linker during release builds.
+//Flags used by the linker during RELEASE builds.
 CMAKE_EXE_LINKER_FLAGS_RELEASE:STRING=
 
-//Flags used by the linker during Release with Debug Info builds.
+//Flags used by the linker during RELWITHDEBINFO builds.
 CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
 //Enable/Disable output of compile commands during generation.
-CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=OFF
+CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=
 
 //Value Computed by CMake.
 CMAKE_FIND_PACKAGE_REDIRECTS_DIR:STATIC=/home/tvc/chien197/pcl_tutorials/practice/build/CMakeFiles/pkgRedirects
@@ -180,19 +175,24 @@ CMAKE_LINKER:FILEPATH=/usr/bin/ld
 //Path to a program.
 CMAKE_MAKE_PROGRAM:FILEPATH=/usr/bin/make
 
-//Flags used by the linker during the creation of modules.
+//Flags used by the linker during the creation of modules during
+// all build types.
 CMAKE_MODULE_LINKER_FLAGS:STRING=
 
-//Flags used by the linker during debug builds.
+//Flags used by the linker during the creation of modules during
+// DEBUG builds.
 CMAKE_MODULE_LINKER_FLAGS_DEBUG:STRING=
 
-//Flags used by the linker during release minsize builds.
+//Flags used by the linker during the creation of modules during
+// MINSIZEREL builds.
 CMAKE_MODULE_LINKER_FLAGS_MINSIZEREL:STRING=
 
-//Flags used by the linker during release builds.
+//Flags used by the linker during the creation of modules during
+// RELEASE builds.
 CMAKE_MODULE_LINKER_FLAGS_RELEASE:STRING=
 
-//Flags used by the linker during Release with Debug Info builds.
+//Flags used by the linker during the creation of modules during
+// RELWITHDEBINFO builds.
 CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
 //Path to a program.
@@ -219,19 +219,24 @@ CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
 //Path to a program.
 CMAKE_READELF:FILEPATH=/usr/bin/readelf
 
-//Flags used by the linker during the creation of dll's.
+//Flags used by the linker during the creation of shared libraries
+// during all build types.
 CMAKE_SHARED_LINKER_FLAGS:STRING=
 
-//Flags used by the linker during debug builds.
+//Flags used by the linker during the creation of shared libraries
+// during DEBUG builds.
 CMAKE_SHARED_LINKER_FLAGS_DEBUG:STRING=
 
-//Flags used by the linker during release minsize builds.
+//Flags used by the linker during the creation of shared libraries
+// during MINSIZEREL builds.
 CMAKE_SHARED_LINKER_FLAGS_MINSIZEREL:STRING=
 
-//Flags used by the linker during release builds.
+//Flags used by the linker during the creation of shared libraries
+// during RELEASE builds.
 CMAKE_SHARED_LINKER_FLAGS_RELEASE:STRING=
 
-//Flags used by the linker during Release with Debug Info builds.
+//Flags used by the linker during the creation of shared libraries
+// during RELWITHDEBINFO builds.
 CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
 //If set, runtime paths are not added when installing shared libraries,
@@ -241,19 +246,24 @@ CMAKE_SKIP_INSTALL_RPATH:BOOL=NO
 //If set, runtime paths are not added when using shared libraries.
 CMAKE_SKIP_RPATH:BOOL=NO
 
-//Flags used by the linker during the creation of static libraries.
+//Flags used by the linker during the creation of static libraries
+// during all build types.
 CMAKE_STATIC_LINKER_FLAGS:STRING=
 
-//Flags used by the linker during debug builds.
+//Flags used by the linker during the creation of static libraries
+// during DEBUG builds.
 CMAKE_STATIC_LINKER_FLAGS_DEBUG:STRING=
 
-//Flags used by the linker during release minsize builds.
+//Flags used by the linker during the creation of static libraries
+// during MINSIZEREL builds.
 CMAKE_STATIC_LINKER_FLAGS_MINSIZEREL:STRING=
 
-//Flags used by the linker during release builds.
+//Flags used by the linker during the creation of static libraries
+// during RELEASE builds.
 CMAKE_STATIC_LINKER_FLAGS_RELEASE:STRING=
 
-//Flags used by the linker during Release with Debug Info builds.
+//Flags used by the linker during the creation of static libraries
+// during RELWITHDEBINFO builds.
 CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
 //Path to a program.
@@ -363,9 +373,6 @@ OPENNI_INCLUDE_DIRS:PATH=/usr/include/ni
 
 //Path to a library.
 OPENNI_LIBRARY:FILEPATH=/usr/lib/libOpenNI.so
-
-//The directory containing a CMake configuration file for Open3D.
-Open3D_DIR:PATH=Open3D_DIR-NOTFOUND
 
 //CXX compiler flags for OpenMP parallelization
 OpenMP_CXX_FLAGS:STRING=-fopenmp
@@ -871,12 +878,6 @@ X11_xkbfile_INCLUDE_PATH:PATH=/usr/include
 //Path to a library.
 X11_xkbfile_LIB:FILEPATH=/usr/lib/x86_64-linux-gnu/libxkbfile.so
 
-//The directory containing a CMake configuration file for cppcolormap.
-cppcolormap_DIR:PATH=/usr/local/lib/cmake/cppcolormap
-
-//The directory containing a CMake configuration file for open3d.
-open3d_DIR:PATH=open3d_DIR-NOTFOUND
-
 //Path to a library.
 pkgcfg_lib_PC_FLANN_flann:FILEPATH=/usr/lib/x86_64-linux-gnu/libflann.so
 
@@ -903,12 +904,6 @@ practice_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 practice_SOURCE_DIR:STATIC=/home/tvc/chien197/pcl_tutorials/practice
-
-//The directory containing a CMake configuration file for xtensor.
-xtensor_DIR:PATH=/usr/local/lib/cmake/xtensor
-
-//The directory containing a CMake configuration file for xtl.
-xtl_DIR:PATH=/usr/local/share/cmake/xtl
 
 
 ########################
@@ -968,7 +963,7 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=3
 //Minor version of cmake used to create the current loaded cache
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=24
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=0
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=1
 //ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
 CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
 //Path to CMake executable.
@@ -1011,8 +1006,6 @@ CMAKE_C_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 CMAKE_C_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_DLLTOOL
 CMAKE_DLLTOOL-ADVANCED:INTERNAL=1
-//Whether to issue deprecation errors for macros and functions.
-CMAKE_ERROR_DEPRECATED:INTERNAL=FALSE
 //Executable file format
 CMAKE_EXECUTABLE_FORMAT:INTERNAL=ELF
 //ADVANCED property for variable: CMAKE_EXE_LINKER_FLAGS
@@ -1041,16 +1034,12 @@ CMAKE_GENERATOR_TOOLSET:INTERNAL=
 CMAKE_HAVE_CONNECT:INTERNAL=1
 //Have function gethostbyname
 CMAKE_HAVE_GETHOSTBYNAME:INTERNAL=1
-//Have symbol pthread_create
-CMAKE_HAVE_LIBC_CREATE:INTERNAL=
 //Test CMAKE_HAVE_LIBC_PTHREAD
 CMAKE_HAVE_LIBC_PTHREAD:INTERNAL=
 //Have library pthreads
 CMAKE_HAVE_PTHREADS_CREATE:INTERNAL=
 //Have library pthread
 CMAKE_HAVE_PTHREAD_CREATE:INTERNAL=1
-//Have include pthread.h
-CMAKE_HAVE_PTHREAD_H:INTERNAL=1
 //Have function remove
 CMAKE_HAVE_REMOVE:INTERNAL=1
 //Have function shmat
@@ -1118,18 +1107,10 @@ CMAKE_STATIC_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_STRIP
 CMAKE_STRIP-ADVANCED:INTERNAL=1
-//Suppress errors that are meant for the author of the CMakeLists.txt
-// files.
-CMAKE_SUPPRESS_DEVELOPER_ERRORS:INTERNAL=TRUE
-//Suppress Warnings that are meant for the author of the CMakeLists.txt
-// files.
-CMAKE_SUPPRESS_DEVELOPER_WARNINGS:INTERNAL=TRUE
 //uname command
 CMAKE_UNAME:INTERNAL=/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-//Whether to issue warnings for deprecated functionality.
-CMAKE_WARN_DEPRECATED:INTERNAL=FALSE
 //ADVANCED property for variable: DSSDK_LIBRARY_DepthSense
 DSSDK_LIBRARY_DepthSense-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: DSSDK_LIBRARY_DepthSensePlugins
@@ -1365,6 +1346,7 @@ PC_EIGEN_LIBS:INTERNAL=
 PC_EIGEN_LIBS_L:INTERNAL=
 PC_EIGEN_LIBS_OTHER:INTERNAL=
 PC_EIGEN_LIBS_PATHS:INTERNAL=
+PC_EIGEN_MODULE_NAME:INTERNAL=eigen3
 PC_EIGEN_PREFIX:INTERNAL=/usr
 PC_EIGEN_STATIC_CFLAGS:INTERNAL=-I/usr/include/eigen3
 PC_EIGEN_STATIC_CFLAGS_I:INTERNAL=
@@ -1390,25 +1372,26 @@ PC_FLANN_CFLAGS_OTHER:INTERNAL=
 PC_FLANN_FOUND:INTERNAL=1
 PC_FLANN_INCLUDEDIR:INTERNAL=/usr/include
 PC_FLANN_INCLUDE_DIRS:INTERNAL=
-PC_FLANN_LDFLAGS:INTERNAL=-lflann;-lflann_cpp
+PC_FLANN_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lflann;-lflann_cpp
 PC_FLANN_LDFLAGS_OTHER:INTERNAL=
 PC_FLANN_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
 PC_FLANN_LIBRARIES:INTERNAL=flann;flann_cpp
-PC_FLANN_LIBRARY_DIRS:INTERNAL=
+PC_FLANN_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
 PC_FLANN_LIBS:INTERNAL=
 PC_FLANN_LIBS_L:INTERNAL=
 PC_FLANN_LIBS_OTHER:INTERNAL=
 PC_FLANN_LIBS_PATHS:INTERNAL=
+PC_FLANN_MODULE_NAME:INTERNAL=flann
 PC_FLANN_PREFIX:INTERNAL=/usr
 PC_FLANN_STATIC_CFLAGS:INTERNAL=
 PC_FLANN_STATIC_CFLAGS_I:INTERNAL=
 PC_FLANN_STATIC_CFLAGS_OTHER:INTERNAL=
 PC_FLANN_STATIC_INCLUDE_DIRS:INTERNAL=
-PC_FLANN_STATIC_LDFLAGS:INTERNAL=-lflann;-lflann_cpp
+PC_FLANN_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lflann;-lflann_cpp
 PC_FLANN_STATIC_LDFLAGS_OTHER:INTERNAL=
 PC_FLANN_STATIC_LIBDIR:INTERNAL=
 PC_FLANN_STATIC_LIBRARIES:INTERNAL=flann;flann_cpp
-PC_FLANN_STATIC_LIBRARY_DIRS:INTERNAL=
+PC_FLANN_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
 PC_FLANN_STATIC_LIBS:INTERNAL=
 PC_FLANN_STATIC_LIBS_L:INTERNAL=
 PC_FLANN_STATIC_LIBS_OTHER:INTERNAL=
@@ -1424,25 +1407,26 @@ PC_OPENNI2_CFLAGS_OTHER:INTERNAL=
 PC_OPENNI2_FOUND:INTERNAL=1
 PC_OPENNI2_INCLUDEDIR:INTERNAL=/usr/include/openni2
 PC_OPENNI2_INCLUDE_DIRS:INTERNAL=/usr/include/openni2
-PC_OPENNI2_LDFLAGS:INTERNAL=-lOpenNI2
+PC_OPENNI2_LDFLAGS:INTERNAL=-L/usr/lib;-lOpenNI2
 PC_OPENNI2_LDFLAGS_OTHER:INTERNAL=
 PC_OPENNI2_LIBDIR:INTERNAL=/usr/lib
 PC_OPENNI2_LIBRARIES:INTERNAL=OpenNI2
-PC_OPENNI2_LIBRARY_DIRS:INTERNAL=
+PC_OPENNI2_LIBRARY_DIRS:INTERNAL=/usr/lib
 PC_OPENNI2_LIBS:INTERNAL=
 PC_OPENNI2_LIBS_L:INTERNAL=
 PC_OPENNI2_LIBS_OTHER:INTERNAL=
 PC_OPENNI2_LIBS_PATHS:INTERNAL=
+PC_OPENNI2_MODULE_NAME:INTERNAL=libopenni2
 PC_OPENNI2_PREFIX:INTERNAL=/usr
 PC_OPENNI2_STATIC_CFLAGS:INTERNAL=-I/usr/include/openni2
 PC_OPENNI2_STATIC_CFLAGS_I:INTERNAL=
 PC_OPENNI2_STATIC_CFLAGS_OTHER:INTERNAL=
 PC_OPENNI2_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/openni2
-PC_OPENNI2_STATIC_LDFLAGS:INTERNAL=-lOpenNI2
+PC_OPENNI2_STATIC_LDFLAGS:INTERNAL=-L/usr/lib;-lOpenNI2
 PC_OPENNI2_STATIC_LDFLAGS_OTHER:INTERNAL=
 PC_OPENNI2_STATIC_LIBDIR:INTERNAL=
 PC_OPENNI2_STATIC_LIBRARIES:INTERNAL=OpenNI2
-PC_OPENNI2_STATIC_LIBRARY_DIRS:INTERNAL=
+PC_OPENNI2_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib
 PC_OPENNI2_STATIC_LIBS:INTERNAL=
 PC_OPENNI2_STATIC_LIBS_L:INTERNAL=
 PC_OPENNI2_STATIC_LIBS_OTHER:INTERNAL=
@@ -1458,25 +1442,26 @@ PC_OPENNI_CFLAGS_OTHER:INTERNAL=
 PC_OPENNI_FOUND:INTERNAL=1
 PC_OPENNI_INCLUDEDIR:INTERNAL=/usr/include/ni
 PC_OPENNI_INCLUDE_DIRS:INTERNAL=/usr/include/ni
-PC_OPENNI_LDFLAGS:INTERNAL=-lOpenNI
+PC_OPENNI_LDFLAGS:INTERNAL=-L/usr/lib;-lOpenNI
 PC_OPENNI_LDFLAGS_OTHER:INTERNAL=
 PC_OPENNI_LIBDIR:INTERNAL=/usr/lib
 PC_OPENNI_LIBRARIES:INTERNAL=OpenNI
-PC_OPENNI_LIBRARY_DIRS:INTERNAL=
+PC_OPENNI_LIBRARY_DIRS:INTERNAL=/usr/lib
 PC_OPENNI_LIBS:INTERNAL=
 PC_OPENNI_LIBS_L:INTERNAL=
 PC_OPENNI_LIBS_OTHER:INTERNAL=
 PC_OPENNI_LIBS_PATHS:INTERNAL=
+PC_OPENNI_MODULE_NAME:INTERNAL=libopenni
 PC_OPENNI_PREFIX:INTERNAL=/usr
 PC_OPENNI_STATIC_CFLAGS:INTERNAL=-I/usr/include/ni
 PC_OPENNI_STATIC_CFLAGS_I:INTERNAL=
 PC_OPENNI_STATIC_CFLAGS_OTHER:INTERNAL=
 PC_OPENNI_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include/ni
-PC_OPENNI_STATIC_LDFLAGS:INTERNAL=-lOpenNI
+PC_OPENNI_STATIC_LDFLAGS:INTERNAL=-L/usr/lib;-lOpenNI
 PC_OPENNI_STATIC_LDFLAGS_OTHER:INTERNAL=
 PC_OPENNI_STATIC_LIBDIR:INTERNAL=
 PC_OPENNI_STATIC_LIBRARIES:INTERNAL=OpenNI
-PC_OPENNI_STATIC_LIBRARY_DIRS:INTERNAL=
+PC_OPENNI_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib
 PC_OPENNI_STATIC_LIBS:INTERNAL=
 PC_OPENNI_STATIC_LIBS_L:INTERNAL=
 PC_OPENNI_STATIC_LIBS_OTHER:INTERNAL=
