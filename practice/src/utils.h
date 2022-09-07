@@ -5,11 +5,7 @@
 using namespace std;
 
 typedef pcl::PointCloud<pcl::PointXYZRGB> point_cloud_rgb_t;
-typedef pair<double, double> point;
 
-bool cw(const point &a, const point &b, const point &c);
-
-vector<point> convexHull(vector<point> p);
 void extract_indices(point_cloud_rgb_t::Ptr &cloud_rgb,
                 point_cloud_rgb_t::Ptr &inlierPoints_neg,
                 pcl::PointIndices::Ptr &inliers);

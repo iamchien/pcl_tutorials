@@ -10,11 +10,11 @@
 #include <pcl/filters/project_inliers.h>
 #include <pcl/surface/concave_hull.h>
 #include <pcl/common/common.h>
+#include "utils.h"
 
 using namespace std;
 
 typedef pcl::PointCloud<pcl::PointXYZRGB> point_cloud_rgb_t;
-typedef pair<double, double> point;
 
 int color_picker[20][3] = {
     {0  , 153, 204},{255,   0, 255},
@@ -28,27 +28,6 @@ int color_picker[20][3] = {
     {153, 51 , 51 },{102, 153,   0},
     {255, 204, 0  },{255, 255,   0}
 };
-
-bool cw(const point &a, const point &b, const point &c) {
-    return (b.first - a.first) * (c.second - a.second) - (b.second - a.second) * (c.first - a.first) < 0;
-}
-
-vector<point> convexHull(vector<point> p) {
-    int n = p.size();
-    if (n <= 1)
-        return p;
-    int k = 0;
-    sort(p.begin(), p.end());
-    vector<point> q(n * 2);
-    for (int i = 0; i < n; q[k++] = p[i++])
-        for (; k >= 2 && !cw(q[k - 2], q[k - 1], p[i]); --k)
-            ;
-    for (int i = n - 2, t = k; i >= 0; q[k++] = p[i--])
-        for (; k > t && !cw(q[k - 2], q[k - 1], p[i]); --k)
-            ;
-    q.resize(k - 1 - (q[0] == q[1]));
-    return q;
-}
 
 void extract_indices(point_cloud_rgb_t::Ptr &cloud_rgb,
                 point_cloud_rgb_t::Ptr &inlierPoints_neg,
@@ -136,7 +115,7 @@ void segmen_plane(point_cloud_rgb_t::Ptr &cloud_rgb, int idx,
     {
         vector<pcl::PointIndices> cluster_indices;
         clustering(inlierPoints, cluster_indices);
-        cout << "PointCloud representing the Cluster: " << cluster_indices.size() << " data points." << endl;
+        // cout << "PointCloud representing the Cluster: " << cluster_indices.size() << " data points." << endl;
         size_t re[2] = {cluster_indices[0].indices.size(), 0};
         for (size_t j = 1; j < cluster_indices.size(); j++)
         {
