@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include "rotating_calipers.h"
 
 // #include <algorithm>
 // #include <vector>
@@ -41,10 +42,10 @@ double dist(const point &a, const point &b) {
 double diameter(const vector<point> &p) {
     vector<point> h = convexHull(p);
     int m = h.size();
-    std::cout << "Size of convexHull is: " << m << endl;
-    for (auto it = h.begin(); it != h.end(); ++it){
-        std::cout << it->first << " " << it->second << endl;
-    }
+    // std::cout << "Size of convexHull is: " << m << endl;
+    // for (auto it = h.begin(); it != h.end(); ++it){
+    //     std::cout << it->first << " " << it->second << endl;
+    // }
 
     if (m == 1)
         return 0;
@@ -54,7 +55,7 @@ double diameter(const vector<point> &p) {
     while (area(h[m - 1], h[0], h[(k + 1) % m]) > area(h[m - 1], h[0], h[k]))
         ++k;
     
-    std::cout << "k is: " << k << endl;
+    // std::cout << "k is: " << k << endl;
 
     double res = 0;
     for (int i = 0, j = k; i <= k && j < m; i++) {
@@ -67,12 +68,12 @@ double diameter(const vector<point> &p) {
     return res;
 }
 
-int main() {
-    vector<point> points{{ 0, 0},{ 3, 0},{ 0, 3},
-                         { 1, 1},{ 3, 4},{ 4, 2},
-                         {-2, 2},{ 2,-1},{ 2, 6},
-                         {-4, 1},{ 4,-2},{ 0,-2},
-                         { 6,-2},{-4, 4},{-2, 6}};
-    double d = diameter(points);
-    std::cout << d << endl;
-}
+// int main() {
+//     vector<point> points{{ 0, 0},{ 3, 0},{ 0, 3},
+//                          { 1, 1},{ 3, 4},{ 4, 2},
+//                          {-2, 2},{ 2,-1},{ 2, 6},
+//                          {-4, 1},{ 4,-2},{ 0,-2},
+//                          { 6,-2},{-4, 4},{-2, 6}};
+//     double d = diameter(points);
+//     std::cout << d << endl;
+// }
