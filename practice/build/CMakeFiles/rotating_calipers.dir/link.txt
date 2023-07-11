@@ -1,1 +1,0 @@
-/usr/bin/c++ -rdynamic CMakeFiles/rotating_calipers.dir/src/rotating_calipers.cpp.o -o rotating_calipers   -L/home/tvc/open3d_install/lib 
